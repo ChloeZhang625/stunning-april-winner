@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homelessness in City of Vancouver</title>
+    <script src="https://unpkg.com/scrollama"></script>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            height: 100vh;
+            overflow:hidden;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            aspect-ratio: 5 / 3;
+            overflow: hidden;
+            border-radius: 0 px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .image {
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            background-size: cover;
+            background-position: center;
+        }
+        #second {
+        z-index: 2; /* Places the second iframe above the first one */
+        clip-path: inset(0 50% 0 0); /* Initially show the left half of image.first */
+        transition: clip-path 0.2s ease-in-out; /* Smooth transition for clipping */
+    }
+
+        
+        .slider {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 5px;
+            background-color: #fff;
+            cursor: ew-resize;
+            z-index: 5;
+        }
+        .slider-handle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            background-color: white;
+            border: 2px solid white;
+            border-radius: 50%;
+            z-index: 10;
+            cursor: ew-resize;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+        }
+
+        
+        .slider-handle::before,
+        .slider-handle::after {
+            content: "";
+            display: inline-block;
+            width: 0;
+            height: 0;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+        }
+
+        .slider-handle::before {
+            border-right: 10px solid gray; /* 左箭头 */
+            margin-right: 4px;
+        }
+
+        .slider-handle::after {
+            border-left: 10px solid gray; /* 右箭头 */
+            margin-left: 4px;
+        }
+
+
+        .legend {
+            position: absolute;
+            min-width: 200px;
+            top: 5%;
+            left: 2%;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 15;
+            max-height: 80%;
+            overflow-y: auto;
+        }
+
+        .legend .layer {
+            margin-bottom: 20px;
+        }
+
+        .legend .layer-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .legend .color-bar {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .legend .color-bar div {
+            width: 25px;
+            height: 25px;
+            margin-bottom: 8px;
+        }
+
+        .legend .color-bar.annual-income div:nth-child(1) { background-color: #f9fbff; }
+        .legend .color-bar.annual-income div:nth-child(2) { background-color: #cfdbec; }
+        .legend .color-bar.annual-income div:nth-child(3) { background-color: #8bb0d2; }
+        .legend .color-bar.annual-income div:nth-child(4) { background-color: #4d78af; }
+        .legend .color-bar.annual-income div:nth-child(5) { background-color: #1b3063; }
+
+        .legend .color-bar.annual-rent div:nth-child(1) { background-color: #ffffff; }
+        .legend .color-bar.annual-rent div:nth-child(2) { background-color: #ffbfbf; }
+        .legend .color-bar.annual-rent div:nth-child(3) { background-color: #ff8080; }
+        .legend .color-bar.annual-rent div:nth-child(4) { background-color: #ff4040; }
+        .legend .color-bar.annual-rent div:nth-child(5) { background-color: #ff0000; }
+
+        .legend .label {
+            display: flex;
+            flex-direction: column;
+            margin-left: 10px;
+        }
+
+        .legend .label span {
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #333;
+        }
+
+        /* Align the color block and label horizontally */
+        .legend .color-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .legend .color-item div {
+            width: 50px;
+            height: 25px;
+            margin-right: 40px; /* Add space between color block and text */
+        }
+
+
+        p {
+            font-size: 18px;
+            margin-top: 20px;
+            font-weight: bold;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    
+
+    <div style="display: flex; flex-direction: column; align-items: center;">
+        <div class="container">
+            <iframe class="image" id="first" src="https://api.mapbox.com/styles/v1/chloe0625222/cm8lp0prd01ai01saan0402ma.html?title=false&access_token=pk.eyJ1IjoiY2hsb2UwNjI1MjIyIiwiYSI6ImNtMGUza2ozaTBrazYyaXByNXU5bzQ1ZzEifQ.VzWdJo3OgzwNC9Vu_piDHQ&zoomwheel=false#11.21/49.2576/-123.1438" title="Monochrome" style="border:none;"></iframe>
+            <iframe class="image" id="second" src="https://api.mapbox.com/styles/v1/chloe0625222/cm8zfxb56004601s64tm73b08.html?title=false&access_token=pk.eyJ1IjoiY2hsb2UwNjI1MjIyIiwiYSI6ImNtMGUza2ozaTBrazYyaXByNXU5bzQ1ZzEifQ.VzWdJo3OgzwNC9Vu_piDHQ&zoomwheel=false#11.21/49.2576/-123.1438" title="Monochrome-copy2" style="border:none;"></iframe>
+            
+            <div class="slider" id="slider"></div>
+            
+            <div class="slider-handle" id="handle"></div>
+        </div>
+        <p style="font-size: 18px; margin-top: 20px; font-weight: bold;">
+            Annual Household Income ($) vs Annual Rent ($) in City of Vancouver
+        </p>
+        
+        <div class="legend">
+            <div class="layer">
+                <div class="layer-title">Annual Income ($)</div>
+                <div class="color-bar annual-income">
+                    <div class="color-item">
+                        <div style="background-color: #f9fbff;"></div><span>32000~57200</span>
+                    </div>
+                    <div class="color-item">
+                        <div style="background-color: #cfdbec;"></div><span>57200~77000</span>
+                    </div>
+                    <div class="color-item">
+                        <div style="background-color: #8bb0d2;"></div><span>77000~92000</span>
+                    </div>
+                    <div class="color-item">
+                        <div style="background-color: #4d78af;"></div><span>92000~113000</span>
+                    </div>
+                    <div class="color-item">
+                        <div style="background-color: #1b3063;"></div><span>113000~166000</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layer">
+                <div class="layer-title">Annual Rent ($)</div>
+                <div class="color-bar annual-rent">
+                    <div class="color-item">
+                        <div style="background-color: #ffffff;"></div><span>6720~12000</span>
+                    </div>
+                    <div class="color-item">
+                        <div style="background-color: #ffbfbf;"></div><span>12000~16560</span>
+                    </div>
+                    <div class="color-item">
+                        <div style="background-color: #ff8080"></div><span>16560~19920</span>
+                    </div>
+                    <div class="color-item">
+                        <div style="background-color: #ff4040;"></div><span>19920~24000</span>
+                    </div>
+                    <div class="color-item">
+                        <div style="background-color: #ff0000;"></div><span>24000~30960</span>
+                    </div>
+                </div>
+            </div>
+        
+    
+    <script>
+        const slider = document.getElementById("slider");
+        const second = document.getElementById("second");
+        const handle = document.getElementById("handle");
+        let isDragging = false;
+
+        handle.addEventListener("mousedown", (e) => {
+            e.preventDefault();  
+            isDragging = true;
+        });
+        window.addEventListener("mouseup", () => isDragging = false);
+        window.addEventListener("mousemove", (e) => {
+            if (!isDragging) return ;
+            requestAnimationFrame (()=>{
+                const rect = slider.parentElement.getBoundingClientRect();
+                let offset = e.clientX - rect.left;
+                offset = Math.max(0, Math.min(offset, rect.width));
+                slider.style.left = offset + "px";
+                handle.style.left = offset + "px";  
+                const percentage = (offset / rect.width) * 100;
+                second.style.clipPath = `inset(0 ${100 - percentage}% 0 0)`;
+            });
+        });
+       
+    </script>
+</body>
+</html>
